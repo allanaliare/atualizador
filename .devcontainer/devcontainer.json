@@ -1,0 +1,19 @@
+{
+  "name": "Central de Atualizacao",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "forwardPorts": [3000, 3333],
+  "portsAttributes": {
+    "3000": {
+      "label": "Painel web",
+      "onAutoForward": "openPreview",
+      "visibility": "private"
+    },
+    "3333": {
+      "label": "API (uso interno)",
+      "onAutoForward": "silent",
+      "visibility": "private"
+    }
+  },
+  "postCreateCommand": "npm run setup",
+  "remoteUser": "node"
+}

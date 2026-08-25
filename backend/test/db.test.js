@@ -15,13 +15,20 @@ test('creates release artifact and event log columns', t => {
 
   const releaseColumns = db.prepare('PRAGMA table_info(release)').all().map(item => item.name);
   const eventColumns = db.prepare('PRAGMA table_info(terminal_event)').all().map(item => item.name);
+  const errorColumns = db.prepare('PRAGMA table_info(application_error)').all().map(item => item.name);
 
   assert.ok(releaseColumns.includes('artifact_type'));
   assert.ok(releaseColumns.includes('original_name'));
   assert.ok(releaseColumns.includes('deadline_at'));
   assert.ok(eventColumns.includes('release_id'));
   assert.ok(releaseColumns.includes('blocked'));
+  assert.ok(releaseColumns.includes('technical_notes'));
+  assert.ok(releaseColumns.includes('show_notes_pdv'));
+  assert.ok(releaseColumns.includes('published_by'));
   assert.ok(db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='app_user'").get());
   assert.ok(db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='user_product'").get());
   assert.ok(db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='user_channel'").get());
+  assert.ok(db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='application_error'").get());
+  for (const column of ['key_terminal_id','crypto_salt','crypto_iv','crypto_auth_tag','encrypted_payload']) assert.ok(errorColumns.includes(column));
+  assert.deepEqual(db.prepare('SELECT store_screenshot FROM error_setting WHERE id=1').get(), { store_screenshot: 0 });
 });

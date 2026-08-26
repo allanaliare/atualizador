@@ -7,9 +7,18 @@ Plataforma independente para distribuir atualizações. O back-end usa Express +
 - Autocadastro de cliente e terminal na primeira consulta.
 - Produtos e canais `test`, `beta` e `production`.
 - Upload ZIP pelo painel e SHA-256 automático.
+- Geração automática de `manifest.json` para todos os arquivos e diretórios do ZIP.
 - Liberação para todos ou clientes selecionados.
 - Dashboard, clientes, terminais, produtos e releases.
 - Cliente Delphi inicial com download, backup e rollback.
+
+## Pacotes ZIP
+
+O ZIP pode ser enviado sem manifesto. Ao publicar a versão, o backend preserva a
+estrutura de diretórios, calcula o SHA-256 de cada arquivo e grava um
+`manifest.json` na raiz do pacote com o ID da publicação, produto, canal e
+versão. Se o ZIP já contiver um manifesto na raiz, ele será substituído pelos
+dados validados pelo servidor.
 
 ## Desenvolvimento local
 

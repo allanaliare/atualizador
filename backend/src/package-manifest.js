@@ -26,11 +26,12 @@ export function addGeneratedManifest(sourceZip,targetZip,metadata) {
   }
   if(!files.length)throw new Error('zip_has_no_files');
   files.sort((a,b)=>a.source.localeCompare(b.source,'en-US'));
-  const entryPoint=files.find(item=>item.source.toLocaleLowerCase('en-US')===`${metadata.product}.exe`.toLocaleLowerCase('en-US'))?.source||'';
+  const executable=files.find(item=>item.source.toLocaleLowerCase('en-US')===`${metadata.product}.exe`.toLocaleLowerCase('en-US'))||files.find(item=>item.source.split('/').pop().toLocaleLowerCase('en-US')===`${metadata.product}.exe`.toLocaleLowerCase('en-US'));
+  const entryPoint=executable?.source||'';
   const manifest={releaseId:String(metadata.releaseId),product:String(metadata.product),channel:String(metadata.channel),version:String(metadata.version),files};
   if(entryPoint)manifest.entryPoint=entryPoint;
   output['manifest.json']=strToU8(JSON.stringify(manifest,null,2)+'\n');
   fs.mkdirSync(path.dirname(targetZip),{recursive:true});
   fs.writeFileSync(targetZip,zipSync(output,{level:6}));
-  return manifest;
+  return {...manifest,executableSha256:executable?.sha256||null};
 }

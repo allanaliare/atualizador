@@ -16,3 +16,8 @@ export function compareVersions(a, b) {
   }
   return 0;
 }
+
+export function isRegressionAfterFix(hashStatus, currentVersion, fixedVersion) {
+  if (hashStatus === 'unauthorized') return false;
+  return Boolean(currentVersion && fixedVersion) && compareVersions(currentVersion, fixedVersion) >= 0;
+}

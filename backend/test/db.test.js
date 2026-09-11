@@ -33,6 +33,8 @@ test('creates release artifact and event log columns', t => {
   assert.ok(db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='notification_read'").get());
   assert.ok(db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='application_error'").get());
   assert.ok(db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='error_rule'").get());
+  assert.ok(db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='product_theme'").get());
+  assert.ok(db.prepare("SELECT name FROM sqlite_master WHERE type='index' AND name='idx_product_theme_default'").get());
   for (const column of ['key_terminal_id','crypto_salt','crypto_iv','crypto_auth_tag','encrypted_payload']) assert.ok(errorColumns.includes(column));
   assert.deepEqual(db.prepare('SELECT store_screenshot FROM error_setting WHERE id=1').get(), { store_screenshot: 0 });
   const hash='a'.repeat(64);

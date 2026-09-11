@@ -83,6 +83,56 @@ Execute `windows/build-and-deploy.bat`. O destino padrão é `C:\UpdaterCentral`
 
 O UUID do terminal deve ser persistido. Uma release global atende clientes novos; a direcionada aparece para clientes que já fizeram uma consulta.
 
+## Personalização remota do ERP
+
+Administradores configuram Agrosys e Aliare por produto na aba **Produtos > Personalizar**. Cada tema possui uma configuração padrão e variantes opcionais por período, dias da semana ou datas específicas; entre variantes aplicáveis, vence a maior prioridade.
+
+O ERP consulta a configuração vigente com a chave de instalação:
+
+```http
+GET /api/v1/config/themes/{codigoProduto}/{agrosys|aliare}?date=2026-12-24
+Authorization: Bearer {INSTALLATION_KEY}
+```
+
+`date` é opcional. A resposta contém as configurações e URLs absolutas das imagens. Agrosys retorna somente logo e plano de fundo; Aliare também retorna fonte, cores, imagens de início e tamanho da logo interna (padrão 191 x 35).
+
+Depois da primeira consulta, o ERP deve persistir `configuration.id` e `configuration.hash`. Nas próximas consultas, envie ambos para validar a configuração local:
+
+```http
+GET /api/v1/config/themes/pdv/aliare?currentThemeId=12&currentThemeHash=HASH_SALVO
+Authorization: Bearer {INSTALLATION_KEY}
+```
+
+Resposta resumida:
+
+```json
+{
+  "product": "pdv",
+  "theme": "aliare",
+  "referenceDate": "2026-09-01",
+  "currentThemeValid": true,
+  "configuration": {
+    "id": 12,
+    "hash": "sha256...",
+    "settings": {
+      "fontFamily": "Segoe UI",
+      "borderColor": "#9e9e9e",
+      "fontColor": "#212121",
+      "errorColor": "#d32f2f",
+      "gridSelectionColor": "#1976d2",
+      "gridSelectionFontColor": "#ffffff",
+      "logoWidth": 191,
+      "logoHeight": 35
+    },
+    "logoUrl": "https://servidor/downloads/themes/...",
+    "backgroundUrl": "https://servidor/downloads/themes/...",
+    "startImageUrls": []
+  }
+}
+```
+
+Se `currentThemeValid` for `false`, o ERP deve baixar as imagens indicadas, aplicar cores e fonte e substituir o ID/hash armazenado pelos valores retornados. A validação considera tanto uma troca de variante por data quanto alterações feitas na configuração.
+
 ## Documentação da API
 
 Com o backend em execução, acesse o Swagger UI em `http://localhost:3333/docs/`.
